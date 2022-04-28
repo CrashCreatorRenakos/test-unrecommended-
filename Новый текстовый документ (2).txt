@@ -1,0 +1,263 @@
+import 'dart:typed_data';
+import 'dart:ui';
+
+import 'bitmap.dart';
+import 'enums.dart';
+import 'notification_sound.dart';
+import 'styles/style_information.dart';
+
+/// Contains notification details specific to Android.
+class AndroidNotificationDetails {
+  /// Constructs an instance of [AndroidNotificationDetails].
+  const AndroidNotificationDetails(
+    this.channelId,
+    this.channelName, {
+    this.channelDescription,
+    this.icon,
+    this.importance = Importance.defaultImportance,
+    this.priority = Priority.defaultPriority,
+    this.styleInformation,
+    this.playSound = true,
+    this.sound,
+    this.enableVibration = true,
+    this.vibrationPattern,
+    this.groupKey,
+    this.setAsGroupSummary = false,
+    this.groupAlertBehavior = GroupAlertBehavior.all,
+    this.autoCancel = true,
+    this.ongoing = false,
+    this.color,
+    this.largeIcon,
+    this.onlyAlertOnce = false,
+    this.showWhen = true,
+    this.when,
+    this.usesChronometer = false,
+    this.channelShowBadge = true,
+    this.showProgress = false,
+    this.maxProgress = 0,
+    this.progress = 0,
+    this.indeterminate = false,
+    this.channelAction = AndroidNotificationChannelAction.createIfNotExists,
+    this.enableLights = false,
+    this.ledColor,
+    this.ledOnMs,
+    this.ledOffMs,
+    this.ticker,
+    this.visibility,
+    this.timeoutAfter,
+    this.category,
+    this.fullScreenIntent = false,
+    this.shortcutId,
+    this.additionalFlags,
+    this.subText,
+    this.tag,
+    this.colorized = false,
+  });
+
+  /// 显示通知时应使用的图标。
+  ///
+  /// When this is set to `null`, the default icon given to
+  /// [AndroidInitializationSettings.defaultIcon] will be used.
+  final String? icon;
+
+  /// The channel's id.
+  ///
+  /// Required for Android 8.0 or newer.
+  final String channelId;
+
+  /// The channel's name.
+  ///
+  /// Required for Android 8.0 or newer.
+  final String channelName;
+
+  /// The channel's description.
+  ///
+  /// This property is only applicable to Android versions 8.0 or newer.
+  final String? channelDescription;
+
+  /// 发布到此频道的通知是否可以在启动器中显示为应用程序图标徽章
+  final bool channelShowBadge;
+
+  /// 重要性
+  final Importance importance;
+
+  /// 优先级
+  final Priority priority;
+
+  /// 指示当通知显示时是否应该播放声音。
+  /// 对于Android 8.0或更新版本，这是绑定到指定的通道，不能在第一次创建通道后更改。
+  final bool playSound;
+
+  /// The sound to play for the notification.
+  ///
+  /// Requires setting [playSound] to true for it to work.
+  /// If [playSound] is set to true but this is not specified then the default
+  /// sound is played.
+  ///
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
+  final AndroidNotificationSound? sound;
+
+  /// 表示在显示通知时是否应启用振动。
+  ///
+  /// 对于安卓8.0或更高版本，这是与指定的频道绑定的，在频道首次创建后不能改变。
+  final bool enableVibration;
+
+  /// 表示在显示通知时是否应启用灯光。
+  ///
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
+  final bool enableLights;
+
+  /// 配置振动模式。
+  ///
+  /// 需要将[enableVibration]设置为true才能工作。
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
+  final Int64List? vibrationPattern;
+
+  /// Specifies the information of the rich notification style to apply to the
+  /// notification.
+  final StyleInformation? styleInformation;
+
+  /// 指定该通知所属的组。
+  ///
+  /// For Android 7.0 or newer.
+  final String? groupKey;
+
+  /// 指定该通知是否将作为分组通知的摘要。
+  final bool setAsGroupSummary;
+
+  /// 指定该通知的群组警报行为
+  ///
+  /// Default is AlertAll.
+  /// 为该通知设置组警报行为。如果该通知组的警报应通过不同的通知处理，请使用此方法静音此通知。这仅适用于属于组的通知。这必须在您要静音的所有通知中调用。例如，如果您只希望小组的摘要发出噪音，则小组中的所有孩子都应具有警报行为group_alert_summary。
+  final GroupAlertBehavior groupAlertBehavior;
+
+  /// 指定在点击通知时是否应自动取消通知。
+  final bool autoCancel;
+
+  /// 指定通知是否为“持续”通知。
+  final bool ongoing;
+
+  /// 指定颜色。
+  final Color? color;
+
+  /// 指定要使用的大图标。
+  final AndroidBitmap<Object>? largeIcon;
+
+  /// Specifies if you would only like the sound, vibrate and ticker to be
+  /// played if the notification is not already showing.
+  final bool onlyAlertOnce;
+
+  /// 指定通知是否应显示发生时间的时间戳。
+  ///
+  /// 要控制通知的实际时间戳，请使用 [when] 。
+  final bool showWhen;
+
+  /// 指定通知的时间戳。
+  ///
+  /// To control whether the timestamp is shown in the notification, use
+  /// [showWhen].
+  ///
+  /// The timestamp is expressed as the number of milliseconds since the
+  /// "Unix epoch" 1970-01-01T00:00:00Z (UTC). If it's not specified but a
+  /// timestamp should be shown (i.e. [showWhen] is set to `true`),
+  /// then Android will default to showing when the notification occurred.
+  final int? when;
+
+  /// 显示[when]为秒表。
+  ///
+  /// 通知将自动显示从[when]开始的分和秒，而不是以时间戳的形式显示[when]。在显示经过的时间(如正在进行的电话)时很有用。
+  final bool usesChronometer;
+
+  /// 指定通知是否用于显示进度。
+  final bool showProgress;
+
+  /// 最大进度值。
+  final int maxProgress;
+
+  /// 当前进度值。
+  final int progress;
+
+  /// 指定是否显示不确定的进度条。
+  final bool indeterminate;
+
+  /// 指定通知的浅色。
+  ///
+  /// 对于Android 8.0或更新版本，这是绑定到指定的通道，不能在第一次创建通道后更改。
+  final Color? ledColor;
+
+  /// Specifies how long the light colour will remain on.
+  ///
+  /// This property is only applicable to Android versions older than 8.0.
+  final int? ledOnMs;
+
+  /// 指定浅色保持关闭的时间。
+  ///
+  /// 此属性仅适用于8.0以上的Android版本。
+  final int? ledOffMs;
+
+  /// 指定发送给可及性服务的 [ticker] 文本。
+  final String? ticker;
+
+  /// 管理通知通道的行动。
+  ///
+  /// Defaults to creating the notification channel using the provided details
+  /// if it doesn't exist
+  final AndroidNotificationChannelAction channelAction;
+
+  /// 定义锁屏上的通知可见性。
+  final NotificationVisibility? visibility;
+
+  /// 以毫秒为单位的持续时间，如果通知还没有被取消，则会被取消。
+  final int? timeoutAfter;
+
+  /// 通知类别。
+  ///
+  /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
+  final String? category;
+
+  /// 指定通知是否应在其触发后立即启动全屏意图。
+  ///
+  /// Note: The system UI may choose to display a heads-up notification,
+  /// instead of launching your full-screen intent, while the user is using the
+  /// device. When the full-screen intent occurs, the plugin will act as though
+  /// the user has tapped on a notification so handle it the same way
+  /// (e.g. via `onSelectNotification` callback) to display the appropriate
+  /// page for your application.
+  final bool fullScreenIntent;
+
+  /// Specifies the id of a published, long-lived sharing that the notification
+  /// will be linked to.
+  ///
+  /// From Android 11, this affects if a messaging-style notification appears
+  /// in the conversation space.
+  final String? shortcutId;
+
+  /// Specifies the additional flags.
+  ///
+  /// These flags will get added to the native Android notification's flags field: https://developer.android.com/reference/android/app/Notification#flags
+  /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
+  /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
+  final Int32List? additionalFlags;
+
+  /// 提供一些在通知中显示的额外信息。
+  ///
+  /// 不保证其具体显示位置。这些信息只有在对理解通知书有重要好处的情况下才可以提供。你提供的文字越多，它的可读性就越差。例如，如果添加了一个以上的电子邮件帐户，电子邮件客户端应该只在这里提供帐户名称。
+  /// 从安卓7.0开始，这一信息显示在通知标题区域。在7.0之前的安卓版本，这将显示在平台通知模板的第三行文本中。在这些版本上，你不应该同时使用setProgress(int, int, boolean)；它们占据了同一个位置。
+  final String? subText;
+
+  /// The notification tag.
+  ///
+  /// 将具有相同(标记，id)对的通知显示为当前可见的通知将用新的通知替换旧的通知，前提是旧的通知不是计划中的通知。换句话说，(标记，id)对只适用于要求立即显示的通知。这是因为用于通知调度的Android AlarmManager api只允许使用id来唯一标识告警。
+  final String? tag;
+
+  /// 指定是否将[color]用作通知的背景色。
+  ///
+  /// Set `true` to enable this. If `false` then the [color] will be
+  /// applied to the app icon.
+  ///
+  /// 对于大多数样式，只有当通知是前台服务通知时，才会应用着色。
+  final bool colorized;
+}
